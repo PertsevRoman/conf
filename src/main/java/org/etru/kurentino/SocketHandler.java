@@ -117,18 +117,6 @@ class SocketHandler extends WebSocketServer {
                 }
                 break;
             }
-            case "startRec": {
-                    User user = registry.get(ws);
-                    System.out.println("" + user);
-                    user.startRecord();
-                }
-                break;
-            case "stopRec": {
-                    User user = registry.get(ws);
-                    System.out.println("" + user);
-                    user.stopRecord();
-                }
-                break;
             case "sendVideoTo":  {
                     try {
                         // Извлечение пользователей

@@ -30,8 +30,6 @@ public class User extends SocketOperator {
     private WebRtcEndpoint endPoint = null;
     private final HashMap<String, WebRtcEndpoint> recvPoints = new HashMap<>();
     
-    private RecorderEndpoint rep = null;
-    
     private String name = null;
     private String roomName = null;
 
@@ -42,7 +40,6 @@ public class User extends SocketOperator {
         this.pline = line;
         
         initialize();
-        createRecordEndpoint();
     }
     
     /**
@@ -51,31 +48,9 @@ public class User extends SocketOperator {
     private void initialize() {
         endPoint = new WebRtcEndpoint.Builder(pline).build();
         
-        endPoint.addOnIceCandidateListener(new EventListener<OnIceCandidateEvent>() {
-            @Override
-            public void onEvent(OnIceCandidateEvent t) {
-                JsonObject message = new JsonObject();
-                message.addProperty("id", "iceCandidate");
-                message.addProperty("name", name);
-                message.addProperty("candidate", JsonUtils.toJsonObject(t.getCandidate()).toString());
-                
-                sendMeassage(message);
-            }
+        endPoint.addOnIceCandidateListener((OnIceCandidateEvent t) -> {
+            sendCandidate(name, t);
         });
-    }
-    
-    /**
-     * Создание записывающей точки
-     */
-    private void createRecordEndpoint() {
-        if(endPoint == null || pline == null) {
-            return;
-        }
-        
-        System.out.println("Подключаем записывающий дескриптор...");
-        rep = new RecorderEndpoint.Builder(pline, "file:///home/joker/tmp/firts.webm").withMediaProfile(MediaProfileSpecType.WEBM).build();
-        endPoint.connect(rep);
-        System.out.println("Записывающий дескриптор подключен.");
     }
     
     /**
@@ -100,34 +75,6 @@ public class User extends SocketOperator {
                 recvPoints.get(userName).addIceCandidate(candidate);
             }
         }
-    }
-
-    /**
-     * Начало записи
-     */
-    public void startRecord() {
-        if(rep == null) {
-            System.out.println("Не настроен записывающий модуль");
-            return;
-        }
-        
-        rep.record();
-        
-        System.out.println("Начинаем запись: " + name);
-    }
-
-    /**
-     * Закончить запись
-     */
-    public void stopRecord() {
-        if(rep == null) {
-            System.out.println("Не настроен записывающий модуль");
-            return;
-        }
-        
-        rep.stop();
-        
-        System.out.println("Останавливаем запись: " + name);
     }
 
     /**
@@ -211,11 +158,29 @@ public class User extends SocketOperator {
     }
 
     /**
+     *
+     * @param userName
+     */
+    public void sendCandidate(String userName, OnIceCandidateEvent t) {
+        JsonObject message = new JsonObject();
+        message.addProperty("id", "iceCandidate");
+        message.addProperty("name", userName);
+        message.addProperty("candidate", JsonUtils.toJsonObject(t.getCandidate()).toString());
+
+        sendMeassage(message);
+    }
+
+    /**
      * Добавляет точку для приема видеосигнала
      * @param userName Пользователь, для которого добавлена точка
      */
     public void addRecvEndpoint(String userName) {
         WebRtcEndpoint point = new WebRtcEndpoint.Builder(pline).build();
+
+        point.addOnIceCandidateListener((OnIceCandidateEvent t) -> {
+            sendCandidate(userName, t);
+        });
+
         recvPoints.put(userName, point);
     }
     

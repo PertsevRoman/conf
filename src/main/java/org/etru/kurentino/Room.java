@@ -20,11 +20,8 @@ public class Room {
     private String name = null;
     private final HashMap<String, User> users = new HashMap<>();
     private final MediaPipeline pline = KMSManager.kmsClient().createMediaPipeline();
-    
-    public Room() {
-    }
 
-    Room(String roomName) {
+    public Room(String roomName) {
         System.out.println("Комната " + roomName + " создана.");
         setName(roomName);
     }
@@ -84,7 +81,7 @@ public class Room {
     
     /**
      * Отправка нового пользователя для существующих
-     * @param name  Имя пользователя
+     * @param name Имя пользователя
      */
     void sendNewUserForAll(String userName) {
         // Выборка пользователя
