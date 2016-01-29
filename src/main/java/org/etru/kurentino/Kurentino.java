@@ -35,7 +35,7 @@ public class Kurentino {
         
         
         String STORETYPE = "JKS";
-        String KEYSTORE = "/home/joker/certs/keystore.jks";
+        String KEYSTORE = System.getProperty("conf.key", "sdoetru_ru.jks");
         String STOREPASSWORD = "From1234qQ";
         String KEYPASSWORD = "From1234qQ";
 
