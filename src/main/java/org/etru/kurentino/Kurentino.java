@@ -33,7 +33,6 @@ public class Kurentino {
         
         SocketHandler s = new SocketHandler(port);
         
-        
         String STORETYPE = "JKS";
         String KEYSTORE = System.getProperty("conf.key", "sdoetru_ru.jks");
         String STOREPASSWORD = "From1234qQ";

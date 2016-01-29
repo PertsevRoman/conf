@@ -67,10 +67,11 @@ public class User extends SocketOperator {
      * @param userName Имя пользователя. Если совпадает с текущим, кандидат добавляется к передающей точке, иначе - к соответствующей принимающей.
      */
     public void addCandidate(IceCandidate candidate, String userName) {
-        System.out.println("Добавляем кандидата на расстрел.");
         if(userName == null ? name == null : userName.equals(name)) {
+            System.out.println(String.format("Кандидат текущему пользователю: %s", userName));
             endPoint.addIceCandidate(candidate);
         } else {
+            System.out.println(String.format("Кандидат передающему: %s", userName));
             if(recvPoints.containsKey(userName)) {
                 recvPoints.get(userName).addIceCandidate(candidate);
             }
